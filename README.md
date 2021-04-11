@@ -1,120 +1,190 @@
-# Web Scraping Homework - Mission to Mars
-
-![mission_to_mars](Images/mission_to_mars.png)
-
-In this assignment, you will build a web application that scrapes various websites for data related to the Mission to Mars and displays the information in a single HTML page. The following outlines what you need to do.
+# SQLAlchemy Homework - Surfs Up!
 
 ### Before You Begin
 
-1. Create a new repository for this project called `web-scraping-challenge`. **Do not add this homework to an existing repository**.
+1. Create a new repository for this project called `sqlalchemy-challenge`. **Do not add this homework to an existing repository**.
 
 2. Clone the new repository to your computer.
 
-3. Inside your local git repository, create a directory for the web scraping challenge. Use a folder name to correspond to the challenge: **Missions_to_Mars**.
+3. Add your Jupyter notebook and `app.py` to this folder. These will be the main scripts to run for analysis.
 
-4. Add your notebook files to this folder as well as your flask app.
+4. Push the above changes to GitHub or GitLab.
 
-5. Push the above changes to GitHub or GitLab.
+![surfs-up.png](Images/surfs-up.png)
 
-## Step 1 - Scraping
+Congratulations! You've decided to treat yourself to a long holiday vacation in Honolulu, Hawaii! To help with your trip planning, you need to do some climate analysis on the area. The following outlines what you need to do.
 
-Complete your initial scraping using Jupyter Notebook, BeautifulSoup, Pandas, and Requests/Splinter.
+## Step 1 - Climate Analysis and Exploration
 
-* Create a Jupyter Notebook file called `mission_to_mars.ipynb` and use this to complete all of your scraping and analysis tasks. The following outlines what you need to scrape.
+To begin, use Python and SQLAlchemy to do basic climate analysis and data exploration of your climate database. All of the following analysis should be completed using SQLAlchemy ORM queries, Pandas, and Matplotlib.
 
-### NASA Mars News
+* Use the provided [starter notebook](climate_starter.ipynb) and [hawaii.sqlite](Resources/hawaii.sqlite) files to complete your climate analysis and data exploration.
 
-* Scrape the [NASA Mars News Site](https://mars.nasa.gov/news/) and collect the latest News Title and Paragraph Text. Assign the text to variables that you can reference later.
+* Use SQLAlchemy `create_engine` to connect to your sqlite database.
 
-```python
-# Example:
-news_title = "NASA's Next Mars Mission to Investigate Interior of Red Planet"
+* Use SQLAlchemy `automap_base()` to reflect your tables into classes and save a reference to those classes called `Station` and `Measurement`.
 
-news_p = "Preparation of NASA's next spacecraft to Mars, InSight, has ramped up this summer, on course for launch next May from Vandenberg Air Force Base in central California -- the first interplanetary launch in history from America's West Coast."
-```
+* Link Python to the database by creating an SQLAlchemy session.
 
-### JPL Mars Space Images - Featured Image
+* **Important** Don't forget to close out your session at the end of your notebook.
 
-* Visit the url for JPL Featured Space Image [here](https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html).
+### Precipitation Analysis
 
-* Use splinter to navigate the site and find the image url for the current Featured Mars Image and assign the url string to a variable called `featured_image_url`.
+* Start by finding the most recent date in the data set.
 
-* Make sure to find the image url to the full size `.jpg` image.
+* Using this date, retrieve the last 12 months of precipitation data by querying the 12 preceding months of data. **Note** you do not pass in the date as a variable to your query.
 
-* Make sure to save a complete url string for this image.
+* Select only the `date` and `prcp` values.
 
-```python
-# Example:
-featured_image_url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/image/featured/mars2.jpg'
-```
+* Load the query results into a Pandas DataFrame and set the index to the date column.
 
-### Mars Facts
+* Sort the DataFrame values by `date`.
 
-* Visit the Mars Facts webpage [here](https://space-facts.com/mars/) and use Pandas to scrape the table containing facts about the planet including Diameter, Mass, etc.
+* Plot the results using the DataFrame `plot` method.
 
-* Use Pandas to convert the data to a HTML table string.
+  ![precipitation](Images/precipitation.png)
 
-### Mars Hemispheres
+* Use Pandas to print the summary statistics for the precipitation data.
 
-* Visit the USGS Astrogeology site [here](https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars) to obtain high resolution images for each of Mar's hemispheres.
+### Station Analysis
 
-* You will need to click each of the links to the hemispheres in order to find the image url to the full resolution image.
+* Design a query to calculate the total number of stations in the dataset.
 
-* Save both the image url string for the full resolution hemisphere image, and the Hemisphere title containing the hemisphere name. Use a Python dictionary to store the data using the keys `img_url` and `title`.
+* Design a query to find the most active stations (i.e. which stations have the most rows?).
 
-* Append the dictionary with the image url string and the hemisphere title to a list. This list will contain one dictionary for each hemisphere.
+  * List the stations and observation counts in descending order.
 
-```python
-# Example:
-hemisphere_image_urls = [
-    {"title": "Valles Marineris Hemisphere", "img_url": "..."},
-    {"title": "Cerberus Hemisphere", "img_url": "..."},
-    {"title": "Schiaparelli Hemisphere", "img_url": "..."},
-    {"title": "Syrtis Major Hemisphere", "img_url": "..."},
-]
-```
+  * Which station id has the highest number of observations?
 
-- - -
+  * Using the most active station id, calculate the lowest, highest, and average temperature.
 
-## Step 2 - MongoDB and Flask Application
+  * Hint: You will need to use a function such as `func.min`, `func.max`, `func.avg`, and `func.count` in your queries.
 
-Use MongoDB with Flask templating to create a new HTML page that displays all of the information that was scraped from the URLs above.
+* Design a query to retrieve the last 12 months of temperature observation data (TOBS).
 
-* Start by converting your Jupyter notebook into a Python script called `scrape_mars.py` with a function called `scrape` that will execute all of your scraping code from above and return one Python dictionary containing all of the scraped data.
+  * Filter by the station with the highest number of observations.
 
-* Next, create a route called `/scrape` that will import your `scrape_mars.py` script and call your `scrape` function.
+  * Query the last 12 months of temperature observation data for this station.
 
-  * Store the return value in Mongo as a Python dictionary.
+  * Plot the results as a histogram with `bins=12`.
 
-* Create a root route `/` that will query your Mongo database and pass the mars data into an HTML template to display the data.
+    ![station-histogram](Images/station-histogram.png)
 
-* Create a template HTML file called `index.html` that will take the mars data dictionary and display all of the data in the appropriate HTML elements. Use the following as a guide for what the final product should look like, but feel free to create your own design.
-
-![final_app_part1.png](Images/final_app_part1.png)
-![final_app_part2.png](Images/final_app_part2.png)
+* Close out your session.
 
 - - -
 
-## Step 3 - Submission
+## Step 2 - Climate App
 
-To submit your work to BootCampSpot, create a new GitHub repository and upload the following:
+Now that you have completed your initial analysis, design a Flask API based on the queries that you have just developed.
 
-1. The Jupyter Notebook containing the scraping code used.
+* Use Flask to create your routes.
 
-2. Screenshots of your final application.
+### Routes
 
-3. Submit the link to your new repository to BootCampSpot.
+* `/`
 
-4. Ensure your repository has regular commits (i.e. 20+ commits) and a thorough README.md file
+  * Home page.
+
+  * List all routes that are available.
+
+* `/api/v1.0/precipitation`
+
+  * Convert the query results to a dictionary using `date` as the key and `prcp` as the value.
+
+  * Return the JSON representation of your dictionary.
+
+* `/api/v1.0/stations`
+
+  * Return a JSON list of stations from the dataset.
+
+* `/api/v1.0/tobs`
+  * Query the dates and temperature observations of the most active station for the last year of data.
+
+  * Return a JSON list of temperature observations (TOBS) for the previous year.
+
+* `/api/v1.0/<start>` and `/api/v1.0/<start>/<end>`
+
+  * Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
+
+  * When given the start only, calculate `TMIN`, `TAVG`, and `TMAX` for all dates greater than and equal to the start date.
+
+  * When given the start and the end date, calculate the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive.
 
 ## Hints
 
-* Use Splinter to navigate the sites when needed and BeautifulSoup to help find and parse out the necessary data.
+* You will need to join the station and measurement tables for some of the queries.
 
-* Use Pymongo for CRUD applications for your database. For this homework, you can simply overwrite the existing document each time the `/scrape` url is visited and new data is obtained.
+* Use Flask `jsonify` to convert your API data into a valid JSON response object.
 
-* Use Bootstrap to structure your HTML template.
+- - -
+
+## Bonus: Other Recommended Analyses
+
+* The following are optional challenge queries. These are highly recommended to attempt, but not required for the homework.
+
+* Use the provided [temp_analysis_bonus_1_starter.ipynb](temp_analysis_bonus_1_starter.ipynb) and [temp_analysis_bonus_1_starter](temp_analysis_bonus_2_starter.ipynb) starter notebooks for each bonus challenge.
+
+### Temperature Analysis I
+
+* Hawaii is reputed to enjoy mild weather all year. Is there a meaningful difference between the temperature in, for example, June and December?
+
+* Use pandas to perform this portion.
+
+  * Convert the date column format from string to datetime.
+
+  * Set the date column as the DataFrame index
+
+  * Drop the date column
+
+* Identify the average temperature in June at all stations across all available years in the dataset. Do the same for December temperature.
+
+* Use the t-test to determine whether the difference in the means, if any, is statistically significant. Will you use a paired t-test, or an unpaired t-test? Why?
+
+### Temperature Analysis II
+
+* You are looking to take a trip from August first to August seventh of this year, but are worried that the weather will be less than ideal. Using historical data in the dataset find out what the temperature has previously looked like.
+
+* The starter notebook contains a function called `calc_temps` that will accept a start date and end date in the format `%Y-%m-%d`. The function will return the minimum, average, and maximum temperatures for that range of dates.
+
+* Use the `calc_temps` function to calculate the min, avg, and max temperatures for your trip using the matching dates from a previous year (i.e., use "2017-08-01").
+
+* Plot the min, avg, and max temperature from your previous query as a bar chart.
+
+  * Use "Trip Avg Temp" as the title.
+
+  * Use the average temperature as the bar height (y value).
+
+  * Use the peak-to-peak (TMAX-TMIN) value as the y error bar (YERR).
+
+    ![temperature](Images/temperature.png)
+
+### Daily Rainfall Average
+
+* Now that you have an idea of the temperature lets check to see what the rainfall has been, you don't want a when it rains the whole time!
+
+* Calculate the rainfall per weather station using the previous year's matching dates.
+
+  * Sort this in descending order by precipitation amount and list the station, name, latitude, longitude, and elevation.
+
+* Calculate the daily normals. Normals are the averages for the min, avg, and max temperatures. You are provided with a function called `daily_normals` that will calculate the daily normals for a specific date. This date string will be in the format `%m-%d`. Be sure to use all historic TOBS that match that date string.
+
+  * Set the start and end date of the trip.
+
+  * Use the date to create a range of dates.
+
+  * Strip off the year and save a list of strings in the format `%m-%d`.
+
+  * Use the `daily_normals` function to calculate the normals for each date string and append the results to a list called `normals`.
+
+* Load the list of daily normals into a Pandas DataFrame and set the index equal to the date.
+
+* Use Pandas to plot an area plot (`stacked=False`) for the daily normals.
+
+  ![daily-normals](Images/daily-normals.png)
+
+* Close out your session.
 
 ### Copyright
 
-Trilogy Education Services © 2021. All Rights Reserved.
+Trilogy Education Services © 2020. All Rights Reserved.
