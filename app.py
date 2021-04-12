@@ -1,47 +1,55 @@
-# 1. import Flask
-from flask import Flask, jsonify
+import datetime as dt
+import numpy as np
 import pandas as pd
 
-# 2. Create an app, being sure to pass __name__
+import sqlalchemy
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine, func
+
+from flask import Flask, jsonify
+
+
+engine = create_engine("sqlite:///hawaii.sqlite")
+
+Base = automap_base()
+# reflect the tables
+Base.prepare(engine, reflect=True)
+
+Measurement = Base.classes.measurement
+Station = Base.classes.station
+
+
+session = Session(engine)
+
 app = Flask(__name__)
 
-pre_df=pd.read_csv("outputs/average_prcp.csv")
-pre_dict=pre_df.to_dict()
-
-station_df=pd.read_csv("outputs/stations.csv")
-station_dict=station_df.to_dict()
-
-lastyear_df=pd.read_csv("outputs/last_year.csv")
-lastyear_dict=lastyear_df.to_dict()
 
 
-# 3. Define what to do when a user hits the index route
 @app.route("/")
-def home():
-    print("Server received request for 'Home' page...")
-    return "Welcome to my 'Home' page!"
+def welcome():
+    return (
+        f"Welcome to the Hawaii Climate Analysis API!<br/>"
+        f"Available Routes:<br/>"
+        f"/api/v1.0/precipitation<br/>"
+        f"/api/v1.0/stations<br/>"
+        f"/api/v1.0/tobs<br/>"
+        f"/api/v1.0/temp/start/end"
+    )
 
 
-# 4. Define what to do when a user hits the /about route
-@app.route("/api/v1.0/precipitation")
-def precipitation():
-    print("precipitation")
-    return jsonify(pre_dict)
-
-@app.route("/api/v1.0/stations")
-def stations():
-    print("stations")
-    return jsonify(station_dict)
-
-@app.route("/api/v1.0/tobs")
-def lastyear():
-    print("stations")
-    return jsonify(lastyear_dict)
-   
+if __name__ == '__main__':
+    app.run()
 
 
 
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+
+
+
+
+
+
+
